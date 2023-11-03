@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,400;0,500;1,700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-size: 62.5%;
+    width: 100%;
+    height: 100%;
+    font-family: 'Roboto', sans-serif;
+}
+
+.node__root,
+.node__leaf,
+.node__branch {
+    font-size: 1rem;
+}
+
+.node__root>circle {
+    fill: #00308F;
+    r: 20;
+}
+
+
+.node__branch>circle {
+    fill: #7FFFD4;
+    r: 20;
+}
+
+.node__leaf>circle {
+    fill: #0066b2;
+    r: 20;
+}
+
+.hide-footer-count .MuiDataGrid-footerContainer {
+    display: none;
+}
