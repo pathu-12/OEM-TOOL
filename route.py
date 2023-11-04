@@ -4,6 +4,9 @@ from flask_cors import CORS
 from database.database_connection import cnxn, cursor
 from database.oem_system_config.oem_system_config import OemSystemConfig
 from database.system_documents.system_documents import SystemDocuments
+from database.maintenance_allocation.maintenance_allocation import MaintenanceAllocation
+from database.equipment_data.equipment_data import EquipmentData
+from database.utility import export_equipment_config_data, export_sensor_data
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -35,6 +38,28 @@ def fetch_tree():
         equipment_id = request.json["equipment_id"]
         instance = OemSystemConfig()
         return  instance.get_equipment_and_children_data(equipment_id)
+
+
+@app.route("/add_maintenance_data", methods=["POST"])
+def maintenance_data():
+    if request.method == "POST":
+        data = request.json["data"]
+        instance = MaintenanceAllocation()
+        return instance.add_sensor(data=data)
+
+
+
+@app.route("/equipment_data", methods=["POST"])
+def equipment_data_ui():
+    if request.method == "POST":
+        equipment_type = request.json["equipment_type"]
+        if equipment_type == "repairable":
+            data = request.json["repairable_data"]
+        else:
+            data = request.json["replacable_data"]
+        instance = EquipmentData()
+        return instance.add_equipment_data(equipment_type=equipment_type, data= data)
+        return request.json
     
 @app.route("/upload", methods=["POST", "GET"])
 def file_upload():
@@ -45,6 +70,9 @@ def file_upload():
         inst = SystemDocuments()
         return inst.upload_system_documents(target_folder=target_folder, file=file)
 
+
+
+
 @app.route("/fetch_system_files", methods=["POST", "GET"])
 def file_download():
     if request.method == "POST":
@@ -53,6 +81,18 @@ def file_download():
         print(equipment)
         inst = SystemDocuments()
         return inst.fetch_system_files(target_folder=target_folder)
+
+
+@app.route("/export_equipment_data", methods=["POST"])
+def equipment_config_data():
+    if request.method == "POST":
+        return export_equipment_config_data()
+
+
+@app.route("/export_sensor_data", methods=["POST"])
+def sensor_data():
+    if request.method == "POST":
+        return export_sensor_data()
 
 if __name__ == '__main__':
     app.run(debug=True)

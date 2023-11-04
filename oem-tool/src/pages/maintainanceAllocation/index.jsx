@@ -7,6 +7,8 @@ import { blue } from '@mui/material/colors';
 
 import styled from "styled-components";
 import { useGetEquipmentsQuery } from "../../redux/apiSlice";
+import { setCurrentEquipment } from "../../redux/currentEquipmentSlice";
+import { useDispatch } from "react-redux";
 
 
 const Div = styled.div`
@@ -112,6 +114,7 @@ const MaintainanceAllocation = () => {
     const [failureMode, setFailureMode] = useState("");
     const [tableData, setTableData] = useState([]);
     const [selectedEquipment, setSelectedEquipment] = useState(null);
+    const dispatch = useDispatch();
 
     const handleInputChange = (e) => {
         setNumSensors(parseInt(e.target.value) || 0);
@@ -141,15 +144,34 @@ const MaintainanceAllocation = () => {
                 f: "",
                 frequency: "",
                 failureMode: failureMode,
+                failureModeId: selectedEquipment.failure_mode_id,
                 equipmentId: selectedEquipment.equipment_id
             });
         }
         setTableData(rows);
     };
 
-    const saveSensorData = () => {
+    const saveSensorData = async () => {
         console.log("hello world")
-        console.log(tableData)
+        try {
+            console.log(tableData)
+            const request = await fetch("/add_maintenance_data", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    data: tableData,
+                }),
+            })
+
+            const data = await request.json()
+            console.log(data)
+        }
+        catch (e) {
+            console.log(e)
+        }
+
     }
 
     const renderMaintenanceUI = (state) => {
@@ -169,7 +191,7 @@ const MaintainanceAllocation = () => {
                             aria-label="config-type"
                             name="config-type"
                             onChange={handleRadio}
-
+                            value={iRadio}
                         >
 
                             <RadioHeading>
@@ -221,6 +243,10 @@ const MaintainanceAllocation = () => {
 
     }
 
+    const setEquipment = () => {
+        dispatch(setCurrentEquipment(selectedEquipment));
+    }
+
 
     const handleCellChange = (params) => {
         const updatedData = tableData.map((row) => {
@@ -241,10 +267,11 @@ const MaintainanceAllocation = () => {
         { field: "minValue", headerName: "Minimum Value", flex: 1, editable: true },
         { field: "maxValue", headerName: "Maximum Value", flex: 1, editable: true },
         { field: "p", headerName: "P", flex: 1, editable: true },
+        { field: "f", headerName: "F", flex: 1, editable: true },
         iRadio === "it"
-        ? { field: "f", headerName: "F", flex: 1, editable: true }
-        : null,
-        { field: "frequency", headerName: "Frequency", flex: 1, editable: true },
+            ?
+            { field: "frequency", headerName: "Frequency", flex: 1, editable: true }
+            : null,
         { field: "failureMode", headerName: "Failure Mode", flex: 1 },
     ].filter((column) => column !== null);;
 
@@ -262,8 +289,8 @@ const MaintainanceAllocation = () => {
                         )}
                         sx={{ width: "300px" }}
                     />
-                    <Button variant="contained" color="primary" onClick={generateRows}>
-                        Generate Table
+                    <Button variant="contained" color="primary" onClick={setEquipment}>
+                        load Equipment
                     </Button>
                 </EquipmentWrapper>
                 <BoxWrapper>

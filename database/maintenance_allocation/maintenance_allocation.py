@@ -14,23 +14,28 @@ class MaintenanceAllocation:
     def add_sensor(self, data):
         try:
             for d in data:
-                equipment_id = d['EquipmentId']
+                print(d)
                 id = str(uuid.uuid4())
-                failure_mode_id=d['FailureModeId']
-                name = d['name']
-                frequency = d['frequency']
+                equipment_id = d['equipmentId']
+                failure_mode_id = d['failureModeId']
+                name = d['parameterName']
+                min_value =d['minValue']
+                max_value =d['maxValue']
                 unit=d['unit']
-                min_value =d['min']
-                max_value =d['max']
-                param_data =d['data']
-                level =d['level']
+                frequency = d['frequency']
+                p = d['p']
+                f = d['f']
                 
-                insert_sensor_based = '''INSERT INTO sensor_based_data (id, component_id,equipment_id, name,
-                                failure_mode_id,frequency,unit, min_value,max_value,data,level)
-                                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+                insert_sensor_based = '''
+                    INSERT INTO oem_sensor_data (id, equipment_id, failure_mode_id, name,
+                        min_value, max_value, unit, frequency, p, f)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                '''
 
-                cursor.execute(insert_sensor_based, id, component_id, equipment_id, name,failure_mode_id,
-                                frequency, unit, min_value,max_value,param_data,level)
+                cursor.execute(
+                    insert_sensor_based, id, equipment_id, failure_mode_id, name,
+                    min_value, max_value, unit, frequency, p, f
+                )
             cursor.commit()
             return self.success_return
         except Exception as e:

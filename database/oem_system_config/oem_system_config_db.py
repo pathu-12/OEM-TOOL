@@ -21,6 +21,7 @@ class OemSystemConfigTable:
                     parallel_components VARCHAR(8000),
                     repair_type VARCHAR(200),
                     failure_mode VARCHAR(200),
+                    failure_mode_id VARCHAR(200),
                     duty_cycle INT
                 )
                 CREATE UNIQUE INDEX oem_system_config_equipment_id_uindex

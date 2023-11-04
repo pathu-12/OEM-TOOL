@@ -30,13 +30,14 @@ class OemSystemConfig:
                     repair_type = system["repairType"]
                     failure_mode = system["failureMode"]
                     duty_cycle = system["dutyCycle"]
+                    failure_mode_id = str(uuid.uuid4())
                     insert_sql = '''
                         INSERT INTO oem_system_config(
-                            equipment_id, equipment_name, parallel_components, repair_type, failure_mode, duty_cycle, parent_name 
-                        ) VALUES(?, ?, ?, ?, ?, ?, ?)
+                            equipment_id, equipment_name, parallel_components, repair_type, failure_mode, duty_cycle, parent_name, failure_mode_id
+                        ) VALUES(?, ?, ?, ?, ?, ?, ?, ?)
                     '''
                     cursor.execute(insert_sql, equipment_id, equipment_name,
-                                   parallel_components, repair_type, failure_mode, duty_cycle, parent_equipment)
+                                   parallel_components, repair_type, failure_mode, duty_cycle, parent_equipment, failure_mode_id)
             cursor.commit()
             return self.success_return
         except Exception as e:
@@ -46,7 +47,7 @@ class OemSystemConfig:
     def get_all_equipment_data(self):
         try:
             select_sql = '''
-                SELECT equipment_id, equipment_name, parallel_components, repair_type, failure_mode, duty_cycle, parent_name
+                SELECT equipment_id, equipment_name, parallel_components, repair_type, failure_mode, duty_cycle, parent_name, failure_mode_id
                 FROM oem_system_config
             '''
             cursor.execute(select_sql)
@@ -61,7 +62,8 @@ class OemSystemConfig:
                         "repair_type": equipment[3],
                         "failure_mode": equipment[4],
                         "duty_cycle": equipment[5],
-                        "parent_name": equipment[6]
+                        "parent_name": equipment[6],
+                        "failure_mode_id": equipment[7]
                     }
                 )
             print(equipments_data_list)

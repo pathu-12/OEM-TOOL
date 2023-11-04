@@ -9,8 +9,15 @@ import { setCurrentEquipment } from "../../redux/currentEquipmentSlice";
 import { DataGrid } from '@mui/x-data-grid';
 import { styled as styledMUI } from '@mui/material/styles';
 import { blue, blueGrey } from '@mui/material/colors';
+import CustomizedSnackbars from "../../components/Sneakbar";
 
 
+
+const EquipmentButton = styled(Button)`
+    width: 5rem;
+    align-self: flex-end;
+
+`
 
 const AutoCompleteWrapper = styled.div`
     display: flex;
@@ -18,7 +25,7 @@ const AutoCompleteWrapper = styled.div`
     gap: 4rem;
 `
 const Div = styled.div`
-    padding: 2rem;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -26,7 +33,7 @@ const Div = styled.div`
 `
 
 const DataGridDiv = styled.div`
-    margin-top: 3rem;
+    margin-top: 1rem;
     align-self: flex-end;
 `
 
@@ -35,26 +42,7 @@ const DataGridDiv = styled.div`
 // `
 
 
-const repairable_components = {
-    columns: [
-        { field: 'alpha', headerName: 'Alpha', flex: 1, editable: true },
-        { field: 'beta', headerName: 'Beta', flex: 1, editable: true },
-    ],
 
-    rows: [
-        { id: 1, alpha: 'X', beta: 'X' },
-    ]
-}
-const replacable_components = {
-    columns: [
-        { field: 'eta', headerName: 'Eta', flex: 1 },
-        { field: 'beta', headerName: 'Beta', flex: 1 },
-    ],
-
-    rows: [
-        { id: 1, alpha: '', beta: '' },
-    ]
-}
 
 const calculateHeight = (numberOfRows) => {
     // Calculate the height based on the number of rows and row height
@@ -132,34 +120,130 @@ const createTree = (data, parentName) => {
 const EquipmentData = () => {
     const { data, error, isLoading } = useGetEquipmentsQuery();
     const [selectedEquipment, setSelectedEquipment] = useState(null);
+    const [type, setType] = useState("repirable");
     const dispatch = useDispatch();
+    const [result, setResult] = useState([]);
     const equipment_data = useSelector((state) => state.currentEquipment);
     const [treeData, setTreeData] = useState({
         name: "Tree",
         children: []
     });
+
+    const [SnackBarMessage, setSnackBarMessage] = useState({
+        severity: "error",
+        message: "This is awesome",
+        showSnackBar: false,
+    });
+
+    const onHandleSnackClose = () => {
+        setSnackBarMessage({
+            severity: "error",
+            message: "Please Add Systems",
+            showSnackBar: false,
+        });
+    };
+
+
     const setEquipment = () => {
         dispatch(setCurrentEquipment(selectedEquipment));
+        setType(equipment_data.repair_type)
         setTreeData({
             ...treeData,
             children: createTree([equipment_data], '')
         })
-        console.log(treeData)
+        setSnackBarMessage({
+            severity: "success",
+            message: "Equipment Loaded Successfully",
+            showSnackBar: true,
+        });
+    }
+
+
+    const repairable_components = {
+        columns: [
+            { field: 'alpha', headerName: 'Alpha', flex: 1, editable: true },
+            { field: 'beta', headerName: 'Beta', flex: 1, editable: true },
+        ],
+
+        rows: [
+            { id: 1, alpha: 'X', beta: 'X', equipment_id: equipment_data.equipment_id },
+        ]
+    }
+    const replacable_components = {
+        columns: [
+            { field: 'eta', headerName: 'Eta', flex: 1 },
+            { field: 'beta', headerName: 'Beta', flex: 1 },
+        ],
+
+        rows: [
+            { id: 1, eta: '', beta: '', equipment_id: equipment_data.equipment_id },
+        ]
     }
 
     const numRows = repairable_components.rows.length;
     const numColumns = repairable_components.columns.length;
 
-    console.log(treeData)
-
-    const handleRowChange = () => {
-
+    const handleCellChange = (params) => {
+        debugger
+        if (type === "repairable") {
+            repairable_components.rows = repairable_components.rows.map(row => {
+                if (row.id === params.id) {
+                    return { ...row, [params.field]: params.value };
+                }
+                return row;
+            });
+        } else {
+            replacable_components.rows = replacable_components.rows.map(row => {
+                if (row.id === params.id) {
+                    return { ...row, [params.field]: params.value };
+                }
+                return row;
+            });
+        }
+        console.log(repairable_components.rows);
+        console.log(replacable_components.rows);
     }
+
+
+    const handleSubmit = async () => {
+        debugger
+        try {
+            const request = await fetch("/equipment_data", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    repairable_data: repairable_components.rows[0],
+                    replacable_data: replacable_components.rows[0],
+                    equipment_type: type
+                })
+            })
+            const data = await request.json()
+            if (data.code) {
+                setSnackBarMessage({
+                    severity: "success",
+                    message: data.message,
+                    showSnackBar: true,
+                });
+            } else {
+                setSnackBarMessage({
+                    severity: "success",
+                    message: data.message,
+                    showSnackBar: true,
+                });
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     useEffect(() => {
         if (selectedEquipment) {
             setEquipment();
         }
     }, [selectedEquipment]);
+
 
     return (
         <Div>
@@ -190,14 +274,36 @@ const EquipmentData = () => {
                 </TreeWrapper>
             }
             <DataGridDiv style={{ height: calculateHeight(numRows), width: calculateWidth(numColumns), overflow: 'hidden' }}>
-                <StyledDataGrid
-                    rows={repairable_components.rows}
-                    columns={repairable_components.columns}
-                    pageSize={5} // You can adjust the number of rows displayed per page
-                    hideFooter={true}
-                    onRowEditCommit={handleRowChange}
-                />
+                {
+                    type == "repairable" ? (
+                        <StyledDataGrid
+                            rows={repairable_components.rows}
+                            columns={repairable_components.columns}
+                            pageSize={5}
+                            hideFooter={true}
+                            onCellEditCommit={handleCellChange}
+                        />
+                    ) : (
+                        <StyledDataGrid
+                            rows={replacable_components.rows}
+                            columns={replacable_components.columns}
+                            pageSize={5}
+                            hideFooter={true}
+                            onCellEditCommit={handleCellChange}
+                        />
+                    )
+
+                }
             </DataGridDiv>
+            <EquipmentButton variant="contained" onClick={handleSubmit}>
+                submit
+            </EquipmentButton>
+            {SnackBarMessage.showSnackBar && (
+                <CustomizedSnackbars
+                    message={SnackBarMessage}
+                    onHandleClose={onHandleSnackClose}
+                />
+            )}
         </Div>
     )
 };

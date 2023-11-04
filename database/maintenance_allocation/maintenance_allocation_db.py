@@ -9,24 +9,23 @@ class MaintenanceAllocationTables:
         is_exist = check_table_exist('oem_sensor_data')
         if not is_exist:
             table = '''
-                CREATE TABLE oem_sensor_data(
-                    id VARCHAR(8000) NOT NULL PRIMARY KEY NONCLUSTERED,
-                    equipment_id VARCHAR(8000) NOT NULL,
-                    CONSTRAINT oem_sensor_data_oem_system_config_equipment_id_FK
-                        REFERENCES oem_system_config,
-                    equipment_id VARCHAR(8000) NOT NULL,
-                    failure_mode_id VARCHAR(8000),
-                    name VARCHAR(8000) NOT NULL,
-                    min_value VARCHAR(200),
-                    max_value VARCHAR(200),
-                    unit VARCHAR(200),
-                    level VARCHAR(200),
-                    frequency VARCHAR(200),
-                )
+                CREATE TABLE oem_sensor_data (
+                    id VARCHAR(255) NOT NULL PRIMARY KEY,
+                    equipment_id VARCHAR(255) NOT NULL,
+                    failure_mode_id VARCHAR(255),
+                    name VARCHAR(255) NOT NULL,
+                    min_value VARCHAR(255),
+                    max_value VARCHAR(255),
+                    unit VARCHAR(255),
+                    frequency VARCHAR(255),
+                    p VARCHAR(200),
+                    f VARCHAR(200)
+                );
             '''
         try:
             cursor.execute(table)
             cnxn.commit()
             return "Tables Created Successfully"
-        except:
+        except Exception as e:
+            print(e)
             return "Some Error Occured"
