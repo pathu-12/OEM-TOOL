@@ -66,7 +66,6 @@ class OemSystemConfig:
                         "failure_mode_id": equipment[7]
                     }
                 )
-            print(equipments_data_list)
             return equipments_data_list
         except Exception as e:
             self.error_return['message'] = str(e)

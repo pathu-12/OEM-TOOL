@@ -67,7 +67,8 @@ const Home = () => {
         { name: "Equipment Configuration", icon: <SettingsIcon sx={{ fontSize: 30 }}/>, path: "/equipment_configuration" },
         { name: "Maintenance Allocation", icon: <EngineeringIcon sx={{ fontSize: 30 }}/>, path: "/maintainance_allocation" },
         { name: "Add System Docs", icon: <TextSnippetIcon sx={{ fontSize: 30 }}/>, path: "/equipment_docs" },
-        { name: "Equipment Data", icon: <HandymanIcon sx={{ fontSize: 30 }}/>, path: "/x" },
+        { name: "Equipment Data", icon: <HandymanIcon sx={{ fontSize: 30 }}/>, path: "/equipment_data" },
+        { name: "Download Data", icon: <HandymanIcon sx={{ fontSize: 30 }}/>, path: "/download_data" },
     ];
     return (
         <>
@@ -89,7 +90,6 @@ const Home = () => {
                     }
                 </LinksWrapper>
                 <LogoWrapper>
-
                     <Logo src="/netra_insma.png" />
                 </LogoWrapper>
             </Div>

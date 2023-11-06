@@ -26,8 +26,9 @@ import {
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import styled from "styled-components";
 import TreeStructure from "../../components/tree";
-import { blueGrey, grey } from "@mui/material/colors";
+import { blueGrey, grey, blue } from "@mui/material/colors";
 import { styled as styledMUI } from '@mui/material/styles';
+import CustomizedSnackbars from "../../components/Sneakbar";
 
 const theme = createTheme({
     components: {
@@ -62,7 +63,7 @@ const theme = createTheme({
 
 const StyledTableCell = styledMUI(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-        backgroundColor: blueGrey[900],
+        backgroundColor: blue[700],
         color: grey["A100"],
         textTransform: "uppercase",
         fontSize: 14
@@ -123,6 +124,20 @@ const EquipmentConfiguration = () => {
 
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = useState({});
+
+    const [SnackBarMessage, setSnackBarMessage] = useState({
+        severity: "error",
+        message: "This is awesome",
+        showSnackBar: false,
+    });
+
+    const onHandleSnackClose = () => {
+        setSnackBarMessage({
+            severity: "error",
+            message: "Please Add Systems",
+            showSnackBar: false,
+        });
+    };
 
     const handleNext = () => {
         const newActiveStep =
@@ -199,7 +214,7 @@ const EquipmentConfiguration = () => {
                 dutyCycle: formData.dutyCycle
             }
             equipmentTree.children = []
-        } else if(formData.parentEquipment === equipmentTree.name) {
+        } else if (formData.parentEquipment === equipmentTree.name) {
             const child = {
                 name: formData.equipmentName,
                 attributes: {
@@ -209,7 +224,7 @@ const EquipmentConfiguration = () => {
                 },
             }
             equipmentTree.children.push(child);
-        }else{
+        } else {
             const child = {
                 name: formData.equipmentName,
                 attributes: {
@@ -232,7 +247,11 @@ const EquipmentConfiguration = () => {
             dutyCycle: "",
         });
 
-
+        setSnackBarMessage({
+            severity: "success",
+            message: "Equipment Added Successfully",
+            showSnackBar: true,
+        });
     };
 
     const toggleDrawer = () => {
@@ -255,6 +274,12 @@ const EquipmentConfiguration = () => {
             prevTableData.filter((row) => !selectedRows.includes(row))
         );
         setSelectedRows([]);
+
+        setSnackBarMessage({
+            severity: "warning",
+            message: "Row Deleted Successfully",
+            showSnackBar: true,
+        });
     };
 
 
@@ -272,7 +297,19 @@ const EquipmentConfiguration = () => {
                 }),
             });
             const data = await res.json();
-            console.log(data);
+            if (data.code) {
+                setSnackBarMessage({
+                    severity: "success",
+                    message: data.message,
+                    showSnackBar: true,
+                });
+            } else {
+                setSnackBarMessage({
+                    severity: "success",
+                    message: data.message,
+                    showSnackBar: true,
+                });
+            }
         } catch (err) {
             console.log(err);
         }
@@ -348,7 +385,7 @@ const EquipmentConfiguration = () => {
                         <StepLabel>
                             Step 2: show tree
                         </StepLabel>
-                        {tableData  && <TreeStructure data={tableData} />}
+                        {tableData && <TreeStructure data={tableData} />}
                     </>
                 )
 
@@ -473,9 +510,10 @@ const EquipmentConfiguration = () => {
                                 </Button>
                                 {activeStep !== steps.length &&
                                     (completed[activeStep] ? (
-                                        <Typography variant="caption" sx={{ display: 'inline-block' }}>
-                                            Step {activeStep + 1} already completed
-                                        </Typography>
+                                        // <Typography variant="caption" sx={{ display: 'inline-block' }}>
+                                        //     Step {activeStep + 1} already completed
+                                        // </Typography>
+                                        <></>
                                     ) : (
                                         <Button onClick={handleComplete}>
                                             {completedSteps() === totalSteps() - 1
@@ -487,6 +525,12 @@ const EquipmentConfiguration = () => {
                         </>
                     )}
                 </div>
+                {SnackBarMessage.showSnackBar && (
+                    <CustomizedSnackbars
+                        message={SnackBarMessage}
+                        onHandleClose={onHandleSnackClose}
+                    />
+                )}
             </Div>
         </>
     )

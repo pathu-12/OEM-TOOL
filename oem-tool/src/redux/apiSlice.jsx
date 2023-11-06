@@ -14,7 +14,7 @@ export const apiSlice = createApi({
                 url: "/fetch_tree",
                 method: "POST",
                 body: equipment_id,
-            }), // Add equipment_id as an argument
+            }),
         }),
     }),
 });

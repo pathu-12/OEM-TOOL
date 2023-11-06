@@ -78,7 +78,6 @@ def file_download():
     if request.method == "POST":
         equipment = request.form.get("equipmentName")
         target_folder = os.path.join(APP_ROOT, f"oem-tool/public/uploads/{equipment}")
-        print(equipment)
         inst = SystemDocuments()
         return inst.fetch_system_files(target_folder=target_folder)
 

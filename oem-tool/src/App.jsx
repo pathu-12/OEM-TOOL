@@ -5,6 +5,7 @@ import EquipmentDocs from "./pages/equipmentDocs";
 import MaintainanceAllocation from "./pages/maintainanceAllocation";
 import Home from "./pages/home";
 import EquipmentData from "./pages/equipmentData";
+import DownloadData from "./pages/downloadData";
 const App = () => {
     return (
         <>
@@ -13,7 +14,8 @@ const App = () => {
                 <Route path="/equipment_configuration" element={<EquipmentConfiguration />} />
                 <Route path="/equipment_docs" element={<EquipmentDocs />} />
                 <Route path="/maintainance_allocation" element={<MaintainanceAllocation />} />
-                <Route path="/x" element={<EquipmentData />} />
+                <Route path="/equipment_data" element={<EquipmentData />} />
+                <Route path="/download_data" element={<DownloadData />} />
             </Routes>
         </>
     )
