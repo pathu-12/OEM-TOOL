@@ -8,7 +8,7 @@ import { blue } from '@mui/material/colors';
 import styled from "styled-components";
 import { useGetEquipmentsQuery } from "../../redux/apiSlice";
 import { setCurrentEquipment } from "../../redux/currentEquipmentSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 
 const Div = styled.div`
@@ -115,6 +115,7 @@ const MaintainanceAllocation = () => {
     const [tableData, setTableData] = useState([]);
     const [selectedEquipment, setSelectedEquipment] = useState(null);
     const dispatch = useDispatch();
+    const equipment = useSelector((state) => state.currentEquipment);
 
     const handleInputChange = (e) => {
         setNumSensors(parseInt(e.target.value) || 0);
@@ -131,6 +132,9 @@ const MaintainanceAllocation = () => {
     };
 
 
+
+
+
     const generateRows = () => {
         const rows = [];
         for (let i = 0; i < numSensors; i++) {
@@ -144,7 +148,7 @@ const MaintainanceAllocation = () => {
                 f: "",
                 frequency: "",
                 failureMode: failureMode,
-                failureModeId: selectedEquipment.failure_mode_id,
+                failureModeId: "",
                 equipmentId: selectedEquipment.equipment_id
             });
         }
@@ -152,16 +156,22 @@ const MaintainanceAllocation = () => {
     };
 
     const saveSensorData = async () => {
-        console.log("hello world")
+
         try {
-            console.log(tableData)
+            const failure = equipment.failure_mode.filter((option) => option.failure_mode === failureMode)
+            const newTableData = tableData.map((equipment) => {
+                return {
+                    ...equipment,
+                    failureModeId: failure[0]?.failure_mode_id
+                }
+            })
             const request = await fetch("/add_maintenance_data", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    data: tableData,
+                    data: newTableData,
                 }),
             })
 
@@ -173,6 +183,10 @@ const MaintainanceAllocation = () => {
         }
 
     }
+
+    // const filteredData = data?.filter(
+    //     (option) => option.equipment_name === selectedEquipment
+    // );
 
     const renderMaintenanceUI = (state) => {
         switch (state) {
@@ -212,7 +226,7 @@ const MaintainanceAllocation = () => {
                         </StyledRadioGroup>
                         <AutoCompleteWrapper>
                             <Autocomplete
-                                options={data}
+                                options={equipment.failure_mode}
                                 getOptionLabel={(option) => option.failure_mode}
                                 onChange={(event, newValue) => setFailureMode(newValue.failure_mode)}
                                 renderInput={(params) => (

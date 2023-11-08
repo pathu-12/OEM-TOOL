@@ -26,18 +26,36 @@ class OemSystemConfig:
                 else:
                     equipment_name = system["equipmentName"]
                     parent_equipment = system["parentEquipment"]
-                    parallel_components = system["parallelComponents"]
+                    parallel_components = system["parallelComponents"].split(",")
                     repair_type = system["repairType"]
-                    failure_mode = system["failureMode"]
+                    failure_mode = system["failureMode"].split(",")
+                    insert_failure_modes = '''
+                        INSERT INTO equipments_failure_modes(
+                            failure_mode_id, equipment_id, failure_mode
+                        ) VALUES(?, ? , ?)
+                    '''
+                    insert_parallel_sql = '''
+                        INSERT INTO parallel_equipments_table(
+                            parallel_id, equipment_name, equipment_id
+                        ) VALUES(?, ?, ?)
+                    '''
+                    for fmode in failure_mode:
+                        failue_mode_id = str(uuid.uuid4())
+                        cursor.execute(insert_failure_modes, failue_mode_id, equipment_id, fmode)
+
+                    for component in parallel_components:
+                        parallel_id = str(uuid.uuid4())
+                        cursor.execute(insert_parallel_sql, parallel_id, component, equipment_id)
+
                     duty_cycle = system["dutyCycle"]
                     failure_mode_id = str(uuid.uuid4())
                     insert_sql = '''
                         INSERT INTO oem_system_config(
-                            equipment_id, equipment_name, parallel_components, repair_type, failure_mode, duty_cycle, parent_name, failure_mode_id
-                        ) VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+                            equipment_id, equipment_name, repair_type, duty_cycle, parent_name
+                        ) VALUES(?, ?, ?, ?, ?)
                     '''
                     cursor.execute(insert_sql, equipment_id, equipment_name,
-                                   parallel_components, repair_type, failure_mode, duty_cycle, parent_equipment, failure_mode_id)
+                        repair_type, duty_cycle, parent_equipment)
             cursor.commit()
             return self.success_return
         except Exception as e:
@@ -47,25 +65,46 @@ class OemSystemConfig:
     def get_all_equipment_data(self):
         try:
             select_sql = '''
-                SELECT equipment_id, equipment_name, parallel_components, repair_type, failure_mode, duty_cycle, parent_name, failure_mode_id
+                SELECT equipment_id, equipment_name, repair_type, duty_cycle
                 FROM oem_system_config
             '''
+
             cursor.execute(select_sql)
-            equipments_data_list = []
             equipments = cursor.fetchall()
+            equipments_data_list = []
             for equipment in equipments:
+                failure_mode_sql = '''SELECT * FROM equipments_failure_modes  WHERE equipment_id = ?'''
+                parallel_sql = '''SELECT * FROM parallel_equipments_table  WHERE equipment_id = ?'''
+                cursor.execute(failure_mode_sql, equipment[0])
+                failure_modes_equipment = cursor.fetchall()
+                cursor.execute(parallel_sql, equipment[0])
+                parallel_equipments = cursor.fetchall()
+                failure_modes_list = []
+                parallel_equipments_list = []
+                for mode in failure_modes_equipment:
+                    failure_modes_list.append({
+                        "failure_mode_id": mode[0],
+                        "equipment_id": mode[1],
+                        "failure_mode": mode[2]
+                    })
+                    
+                for equipment in parallel_equipments:
+                    parallel_equipments_list.append({
+                        "parallel_id": equipment[0],
+                        "equipment_name": equipment[1],
+                        "equipment_id": equipment[2]
+                    })
+
                 equipments_data_list.append(
                     {
                         "equipment_id": equipment[0],
                         "equipment_name": equipment[1],
-                        "parallel_components": equipment[2],
-                        "repair_type": equipment[3],
-                        "failure_mode": equipment[4],
-                        "duty_cycle": equipment[5],
-                        "parent_name": equipment[6],
-                        "failure_mode_id": equipment[7]
+                        "repair_type": equipment[2],
+                        "failure_mode": failure_modes_list,
+                        "duty_cycle": equipment[3],
                     }
                 )
+            print(equipments_data_list)
             return equipments_data_list
         except Exception as e:
             self.error_return['message'] = str(e)

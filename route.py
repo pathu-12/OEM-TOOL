@@ -14,6 +14,8 @@ app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 CORS(app) 
+
+
 @app.route('/home', methods=["POST"])
 def get_data():
     data = {'message': 'Hello from Flask backend!'}

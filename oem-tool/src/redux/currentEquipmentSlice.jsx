@@ -4,7 +4,7 @@ const initialState = {
     duty_cycle: "",
     equipment_id: "",
     equipment_name: "",
-    failure_mode: "",
+    failure_mode: [],
     parallel_components: "",
     repair_type: "",
     parent_name: ""

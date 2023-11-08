@@ -34,6 +34,36 @@ const ProgressContent = styled.div`
 `
 
 
+const ContentWrapper = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    font-size: 1rem;
+    flex-direction: column;
+    gap: 2rem;
+`
+
+const BtnWrapper = styled.div`
+    display: flex;
+    gap: 2rem;
+`
+
+const StyledLinkButton = styled.button`
+    background: none;
+    color: #3498db;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    font: inherit;
+    &:hover {
+        text-decoration: none;
+    }
+`;
+
 const DownloadData = () => {
     const [progress, setProgress] = useState(10);
     const downloadCSV = (url, filename) => {
@@ -61,7 +91,7 @@ const DownloadData = () => {
         }, 800);
 
         if (progress >= 100) {
-            clearInterval(timer); 
+            clearInterval(timer);
         }
 
         return () => {
@@ -106,19 +136,26 @@ const DownloadData = () => {
                         {
                             displayContent(progress)
                         }
-                    </ProgressionBarWrapper> : <>
-                        download contaent
-                    </>
+                    </ProgressionBarWrapper> : <ContentWrapper>
+                        <div>
+                            download the files
+                        </div>
+                        <BtnWrapper>
+                            <StyledLinkButton
+                                onClick={() => downloadCSV('/export_equipment_data', 'equipment_data.csv')}
+                            >
+                                Download Equipment Data
+                            </StyledLinkButton>
+                            <StyledLinkButton
+                                onClick={() => downloadCSV('/export_sensor_data', 'sensor_data.csv')}
+                            >
+                                Download Sensor Data
+                            </StyledLinkButton>
+                        </BtnWrapper>
+                    </ContentWrapper>
                 }
 
             </Div>
-
-            {/* <button onClick={() => downloadCSV('/export_equipment_data', 'equipment_data.csv')}>
-                Download CSV 1
-            </button>
-            <button onClick={() => downloadCSV('/export_sensor_data', 'sensor_data.csv')}>
-                Download CSV 1
-            </button> */}
         </>
     )
 }

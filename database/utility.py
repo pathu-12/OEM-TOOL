@@ -19,13 +19,15 @@ def export_equipment_config_data():
     equipment_configuration = '''
         SELECT
             sys.*,
-            alpha_beta.alpha,
-            alpha_beta.beta,
-            eta_beta.eta,
-            eta_beta.beta
+            ab.alpha,
+            ab.beta,
+            eb.eta,
+            eb.beta
         FROM oem_system_config AS sys
-        LEFT JOIN alpha_beta ON sys.equipment_id = alpha_beta.equipment_id
-        LEFT JOIN eta_beta ON sys.equipment_id = eta_beta.equipment_id;
+        LEFT JOIN alpha_beta AS ab ON sys.equipment_id = ab.equipment_id
+        LEFT JOIN eta_beta AS eb ON sys.equipment_id = eb.equipment_id
+        RIGHT JOIN equipments_failure_modes AS ef ON sys.equipment_id = ef.equipment_id;
+
     '''
 
     dataframe = pd.read_sql(equipment_configuration, cnxn)

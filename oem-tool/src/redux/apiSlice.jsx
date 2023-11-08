@@ -9,13 +9,6 @@ export const apiSlice = createApi({
         getEquipments: builder.query({
             query: () => "/fetch_equipments",
         }),
-        getTreeData: builder.query({
-            query: (equipment_id) => ({
-                url: "/fetch_tree",
-                method: "POST",
-                body: equipment_id,
-            }),
-        }),
     }),
 });
 
