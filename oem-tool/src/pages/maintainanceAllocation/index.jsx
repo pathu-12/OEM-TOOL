@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useState } from "react";
 import { styled as styledMUI } from '@mui/material/styles';
 import { blue } from '@mui/material/colors';
-
+import Navbar from "../../components/Navbar";
 
 import styled from "styled-components";
 import { useGetEquipmentsQuery } from "../../redux/apiSlice";
@@ -291,6 +291,7 @@ const MaintainanceAllocation = () => {
 
     return (
         <>
+            <Navbar/>
             <Div>
                 <EquipmentWrapper>
                     <Autocomplete

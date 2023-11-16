@@ -1,8 +1,11 @@
 
-import { Box, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, TextField, Typography } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useEffect, useState } from 'react';
 import { styled } from "styled-components";
+import { useGetEquipmentsQuery } from '../../redux/apiSlice';
+import { useDispatch } from 'react-redux';
+import { setCurrentEquipment } from '../../redux/currentEquipmentSlice';
 
 
 const Div = styled.div`
@@ -10,6 +13,14 @@ const Div = styled.div`
     width: 100vw;
     padding: 2rem;
 `
+
+const AutoCompleteWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+`
+
+
 const ProgressionBarWrapper = styled(Box)`
     height: 100%;
     width: 100%;
@@ -66,6 +77,9 @@ const StyledLinkButton = styled.button`
 
 const DownloadData = () => {
     const [progress, setProgress] = useState(10);
+    const dispatch = useDispatch();
+    const { data, error, isLoading } = useGetEquipmentsQuery();
+    const [selectedEquipment, setSelectedEquipment] = useState(null);
     const downloadCSV = (url, filename) => {
         fetch(url, {
             method: "POST"
@@ -118,9 +132,27 @@ const DownloadData = () => {
         }
     };
 
+    const setEquipment = () => {
+        dispatch(setCurrentEquipment(selectedEquipment));
+    }
+
     return (
         <>
             <Div>
+                <AutoCompleteWrapper>
+                    <Autocomplete
+                        options={data}
+                        getOptionLabel={(option) => option.equipment_name}
+                        value={selectedEquipment}
+                        onChange={(event, newValue) => setSelectedEquipment(newValue)}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Equipment Name" />
+                        )}
+                        sx={{ width: "300px" }}
+                    /><Button variant="contained" onClick={setEquipment}>
+                        Load Equipment
+                    </Button>
+                </AutoCompleteWrapper>
                 {
                     progress < 100 ? <ProgressionBarWrapper>
                         <ProgressWrapper>

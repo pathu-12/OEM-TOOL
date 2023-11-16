@@ -10,7 +10,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { styled as styledMUI } from '@mui/material/styles';
 import { blue, blueGrey } from '@mui/material/colors';
 import CustomizedSnackbars from "../../components/Sneakbar";
-
+import Navbar from "../../components/Navbar";
 
 
 const EquipmentButton = styled(Button)`
@@ -25,10 +25,10 @@ const AutoCompleteWrapper = styled.div`
     gap: 4rem;
 `
 const Div = styled.div`
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem 0 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
     width: 100vw;
 `
 
@@ -246,65 +246,68 @@ const EquipmentData = () => {
 
 
     return (
-        <Div>
-            <AutoCompleteWrapper>
-                <Autocomplete
-                    options={data}
-                    getOptionLabel={(option) => option.equipment_name}
-                    value={selectedEquipment}
-                    onChange={(event, newValue) => setSelectedEquipment(newValue)}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Equipment Name" />
-                    )}
-                    sx={{ width: "300px" }}
-                /><Button variant="contained" onClick={setEquipment}>
-                    Load Equipment
-                </Button>
-            </AutoCompleteWrapper>
-            {
-                treeData.children && <TreeWrapper id="treeWrapper" style={{ width: '100%', height: '22rem' }}>
-                    <Tree
-                        data={treeData}
-                        translate={{ x: 300, y: 100 }}
-                        nodeSize={{ x: 200, y: 200 }}
-                        rootNodeClassName="node__root"
-                        branchNodeClassName="node__branch"
-                        leafNodeClassName="node__leaf"
-                    />
-                </TreeWrapper>
-            }
-            <DataGridDiv style={{ height: calculateHeight(numRows), width: calculateWidth(numColumns), overflow: 'hidden' }}>
+        <>
+            <Navbar/>
+            <Div>
+                <AutoCompleteWrapper>
+                    <Autocomplete
+                        options={data}
+                        getOptionLabel={(option) => option.equipment_name}
+                        value={selectedEquipment}
+                        onChange={(event, newValue) => setSelectedEquipment(newValue)}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Equipment Name" />
+                        )}
+                        sx={{ width: "300px" }}
+                    /><Button variant="contained" onClick={setEquipment}>
+                        Load Equipment
+                    </Button>
+                </AutoCompleteWrapper>
                 {
-                    type == "repairable" ? (
-                        <StyledDataGrid
-                            rows={repairable_components.rows}
-                            columns={repairable_components.columns}
-                            pageSize={5}
-                            hideFooter={true}
-                            onCellEditCommit={handleCellChange}
+                    treeData.children && <TreeWrapper id="treeWrapper" style={{ width: '100%', height: '22rem' }}>
+                        <Tree
+                            data={treeData}
+                            translate={{ x: 300, y: 100 }}
+                            nodeSize={{ x: 200, y: 200 }}
+                            rootNodeClassName="node__root"
+                            branchNodeClassName="node__branch"
+                            leafNodeClassName="node__leaf"
                         />
-                    ) : (
-                        <StyledDataGrid
-                            rows={replacable_components.rows}
-                            columns={replacable_components.columns}
-                            pageSize={5}
-                            hideFooter={true}
-                            onCellEditCommit={handleCellChange}
-                        />
-                    )
-
+                    </TreeWrapper>
                 }
-            </DataGridDiv>
-            <EquipmentButton variant="contained" onClick={handleSubmit}>
-                submit
-            </EquipmentButton>
-            {SnackBarMessage.showSnackBar && (
-                <CustomizedSnackbars
-                    message={SnackBarMessage}
-                    onHandleClose={onHandleSnackClose}
-                />
-            )}
-        </Div>
+                <DataGridDiv style={{ height: calculateHeight(numRows), width: calculateWidth(numColumns), overflow: 'hidden' }}>
+                    {
+                        type == "repairable" ? (
+                            <StyledDataGrid
+                                rows={repairable_components.rows}
+                                columns={repairable_components.columns}
+                                pageSize={5}
+                                hideFooter={true}
+                                onCellEditCommit={handleCellChange}
+                            />
+                        ) : (
+                            <StyledDataGrid
+                                rows={replacable_components.rows}
+                                columns={replacable_components.columns}
+                                pageSize={5}
+                                hideFooter={true}
+                                onCellEditCommit={handleCellChange}
+                            />
+                        )
+
+                    }
+                </DataGridDiv>
+                <EquipmentButton variant="contained" onClick={handleSubmit}>
+                    submit
+                </EquipmentButton>
+                {SnackBarMessage.showSnackBar && (
+                    <CustomizedSnackbars
+                        message={SnackBarMessage}
+                        onHandleClose={onHandleSnackClose}
+                    />
+                )}
+            </Div>
+        </>
     )
 };
 

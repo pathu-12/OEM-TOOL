@@ -11,10 +11,11 @@ import PublishIcon from '@mui/icons-material/Publish';
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadDocument from '../../components/UploadDocument';
 import DownloadDocument from '../../components/DownloadDocument';
+import Navbar from "../../components/Navbar";
 
 const Div = styled.div`
     width: 100vw;
-    height: 100vh;
+    height: 85vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,7 +23,7 @@ const Div = styled.div`
 
 const BoxWrapper = styled.div`
     width: 60%;
-    height: 70%;
+    height: 75%;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     display: flex;
     justify-content: center;
@@ -56,6 +57,7 @@ const EquipmentDocs = () => {
     };
     return (
         <>
+            <Navbar/>
             <Div>
                 <ToggleButtonGroup
                     orientation="vertical"

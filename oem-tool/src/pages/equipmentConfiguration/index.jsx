@@ -29,6 +29,7 @@ import TreeStructure from "../../components/tree";
 import { blueGrey, grey, blue } from "@mui/material/colors";
 import { styled as styledMUI } from '@mui/material/styles';
 import CustomizedSnackbars from "../../components/Sneakbar";
+import Navbar from "../../components/Navbar";
 
 const theme = createTheme({
     components: {
@@ -320,6 +321,7 @@ const EquipmentConfiguration = () => {
             case 0:
                 return (
                     <>
+                        <Navbar/>
                         <ThemeProvider theme={theme}>
                             <Box>
                                 <StepLabel>

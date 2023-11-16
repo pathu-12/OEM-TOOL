@@ -101,7 +101,6 @@ class OemSystemConfig:
                         "equipment_name": equipment[1],
                         "repair_type": equipment[2],
                         "failure_mode": failure_modes_list,
-                        "duty_cycle": equipment[3],
                     }
                 )
             print(equipments_data_list)
