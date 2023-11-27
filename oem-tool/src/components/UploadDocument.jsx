@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCurrentEquipment } from "../redux/currentEquipmentSlice";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DescriptionIcon from '@mui/icons-material/Description';
+import CustomizedSnackbars from "./Sneakbar";
 
 const Div = styled.div`
     display: flex;
@@ -83,7 +84,26 @@ const UploadDocument = () => {
 
     const setEquipment = () => {
         dispatch(setCurrentEquipment(selectedEquipment));
+        setSnackBarMessage({
+            severity: "success",
+            message: "Equipment Loaded Successfully",
+            showSnackBar: true,
+        });
     }
+
+    const [SnackBarMessage, setSnackBarMessage] = useState({
+        severity: "error",
+        message: "This is awesome",
+        showSnackBar: false,
+    });
+
+    const onHandleSnackClose = () => {
+        setSnackBarMessage({
+            severity: "error",
+            message: "Please Add Systems",
+            showSnackBar: false,
+        });
+    };
 
     const onDrop = useCallback(async (acceptedFiles) => {
         try {
@@ -103,6 +123,7 @@ const UploadDocument = () => {
 
             // Update the list of uploaded files
             setUploadedFiles(acceptedFiles);
+            
         } catch (error) {
             // Handle errors, e.g., display an error message to the user
             console.error('Error uploading files:', error);
@@ -112,6 +133,7 @@ const UploadDocument = () => {
     console.log(selectedEquipment)
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
 
     return (
         <>
@@ -135,7 +157,7 @@ const UploadDocument = () => {
                         uploadedFiles.length === 0 ? (
                             <DropZoneContainer {...getRootProps()} isDragActive={isDragActive}>
                                 <input {...getInputProps()} />
-                                <div><CloudUploadIcon sx={{fontSize: 80}}/></div>
+                                <div><CloudUploadIcon sx={{ fontSize: 80 }} /></div>
                                 {isDragActive ? <p>Drop the files here ...</p> : <p>Drag 'n' drop some files here, or click to select files</p>}
                             </DropZoneContainer>
                         )
@@ -144,7 +166,7 @@ const UploadDocument = () => {
                                 <UL>
                                     {uploadedFiles.map((file, index) => (
                                         <LI key={index}>
-                                            <DescriptionIcon/> <span>{file.name}</span>
+                                            <DescriptionIcon /> <span>{file.name}</span>
                                         </LI>
                                     ))}
                                 </UL>
@@ -152,6 +174,12 @@ const UploadDocument = () => {
                     }
                 </div>
             </Div>
+            {SnackBarMessage.showSnackBar && (
+                <CustomizedSnackbars
+                    message={SnackBarMessage}
+                    onHandleClose={onHandleSnackClose}
+                />
+            )}
         </>
     )
 }

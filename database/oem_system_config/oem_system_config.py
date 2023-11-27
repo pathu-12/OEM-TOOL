@@ -65,7 +65,7 @@ class OemSystemConfig:
     def get_all_equipment_data(self):
         try:
             select_sql = '''
-                SELECT equipment_id, equipment_name, repair_type, duty_cycle
+                SELECT equipment_id, equipment_name, repair_type, duty_cycle, parent_name
                 FROM oem_system_config
             '''
 
@@ -88,11 +88,11 @@ class OemSystemConfig:
                         "failure_mode": mode[2]
                     })
                     
-                for equipment in parallel_equipments:
+                for equipment_ in parallel_equipments:
                     parallel_equipments_list.append({
-                        "parallel_id": equipment[0],
-                        "equipment_name": equipment[1],
-                        "equipment_id": equipment[2]
+                        "parallel_id": equipment_[0],
+                        "equipment_name": equipment_[1],
+                        "equipment_id": equipment_[2]
                     })
 
                 equipments_data_list.append(
@@ -100,7 +100,9 @@ class OemSystemConfig:
                         "equipment_id": equipment[0],
                         "equipment_name": equipment[1],
                         "repair_type": equipment[2],
+                        "duty_cycle": equipment[3],
                         "failure_mode": failure_modes_list,
+                        "parent_name": equipment[-1]
                     }
                 )
             print(equipments_data_list)

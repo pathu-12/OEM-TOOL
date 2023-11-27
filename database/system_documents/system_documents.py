@@ -13,13 +13,17 @@ class SystemDocuments:
     def upload_system_documents(self, target_folder, file):
         try:
             if not os.path.exists(target_folder):
-                os.mkdir(target_folder)
+                os.makedirs(target_folder)
             for f in file:
                 filename = secure_filename(f.filename)
-                f.save(os.path.join(target_folder, filename))
+                file_path = os.path.join(target_folder, filename)
+                print("Saving file to:", file_path)
+                f.save(file_path)
             return self.success_return
         except Exception as e:
+            print(e)
             return self.error_return
+
 
     def fetch_system_files(self, target_folder):
         try:

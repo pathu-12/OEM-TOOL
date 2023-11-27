@@ -97,9 +97,9 @@ const createTree = (data, parentName) => {
                 attributes.repair_type = item.repair_type;
             }
 
-            if (item.failure_mode !== "") {
-                attributes.failure_mode = item.failure_mode;
-            }
+            // if (item.failure_mode !== "") {
+            //     attributes.failure_mode = item.failure_mode;
+            // }
 
             if (item.duty_cycle !== "") {
                 attributes.duty_cycle = item.duty_cycle;

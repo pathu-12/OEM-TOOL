@@ -4,6 +4,7 @@ import FileUploader from "./FileUploader";
 import { useState } from "react";
 import styled from "styled-components"
 import { useSelector } from "react-redux";
+import CustomizedSnackbars from "./Sneakbar";
 
 const Div = styled.div`
     display: flex;
@@ -67,7 +68,27 @@ const DownloadDocument = () => {
             setDownloadableFiles(data.data);
             console.log(data)
         }
+        setSnackBarMessage({
+            severity: "success",
+            message: "Equipment Loaded Successfully",
+            showSnackBar: true,
+        });
     }
+
+    const [SnackBarMessage, setSnackBarMessage] = useState({
+        severity: "error",
+        message: "This is awesome",
+        showSnackBar: false,
+    });
+
+    const onHandleSnackClose = () => {
+        setSnackBarMessage({
+            severity: "error",
+            message: "Please Add Systems",
+            showSnackBar: false,
+        });
+    };
+
 
     return (
         <>
@@ -91,13 +112,19 @@ const DownloadDocument = () => {
                     <UL>
                         {
                             downloadableFiles && downloadableFiles.map((file, idx) => (
-                                <LI key={idx}><Link href={`/uploads/${equipment.equipment_name}/${file}`}>{file}</Link></LI>
+                                <LI key={idx}><Link href={`/uploads/${equipment.equipment_name}/${file}`} >{file}</Link></LI>
                             ))
                         }
                     </UL>
 
                 </FilesWrappper>
             </Div>
+            {SnackBarMessage.showSnackBar && (
+                <CustomizedSnackbars
+                    message={SnackBarMessage}
+                    onHandleClose={onHandleSnackClose}
+                />
+            )}
         </>
     )
 }

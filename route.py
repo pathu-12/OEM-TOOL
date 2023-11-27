@@ -68,7 +68,7 @@ def file_upload():
     if request.method == "POST" or request.method == "GET":
         file = request.files.getlist("file")
         equipment = request.form.get("equipmentName")
-        target_folder = os.path.join(APP_ROOT, f"oem-tool/public/uploads/{equipment}")
+        target_folder = os.path.join(APP_ROOT, f"oem-tool/public/uploads/{equipment.strip()}")
         inst = SystemDocuments()
         return inst.upload_system_documents(target_folder=target_folder, file=file)
 
@@ -77,9 +77,9 @@ def file_upload():
 
 @app.route("/fetch_system_files", methods=["POST", "GET"])
 def file_download():
-    if request.method == "POST":
+    if request.method == "POST" or request.method == "GET":
         equipment = request.form.get("equipmentName")
-        target_folder = os.path.join(APP_ROOT, f"oem-tool/public/uploads/{equipment}")
+        target_folder = os.path.join(APP_ROOT, f"oem-tool/public/uploads/{equipment.strip()}")
         inst = SystemDocuments()
         return inst.fetch_system_files(target_folder=target_folder)
 
@@ -87,13 +87,15 @@ def file_download():
 @app.route("/export_equipment_data", methods=["POST"])
 def equipment_config_data():
     if request.method == "POST":
-        return export_equipment_config_data()
+        equipment = request.json["equipmentName"]
+        return export_equipment_config_data(equipment)
 
 
 @app.route("/export_sensor_data", methods=["POST"])
 def sensor_data():
     if request.method == "POST":
-        return export_sensor_data()
+        equipment = request.json["equipmentName"]
+        return export_sensor_data(equipment)
 
 if __name__ == '__main__':
     app.run(debug=True)

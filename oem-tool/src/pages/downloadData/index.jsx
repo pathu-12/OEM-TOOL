@@ -6,11 +6,10 @@ import { styled } from "styled-components";
 import { useGetEquipmentsQuery } from '../../redux/apiSlice';
 import { useDispatch } from 'react-redux';
 import { setCurrentEquipment } from '../../redux/currentEquipmentSlice';
+import CustomizedSnackbars from '../../components/Sneakbar';
 
 
 const Div = styled.div`
-    height: 100vh;
-    width: 100vw;
     padding: 2rem;
 `
 
@@ -22,8 +21,8 @@ const AutoCompleteWrapper = styled.div`
 
 
 const ProgressionBarWrapper = styled(Box)`
-    height: 100%;
     width: 100%;
+    height: 70vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,7 +46,7 @@ const ProgressContent = styled.div`
 
 const ContentWrapper = styled.div`
     width: 100%;
-    height: 100%;
+    height: 70vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -77,12 +76,33 @@ const StyledLinkButton = styled.button`
 
 const DownloadData = () => {
     const [progress, setProgress] = useState(10);
+    const [SnackBarMessage, setSnackBarMessage] = useState({
+        severity: "error",
+        message: "This is awesome",
+        showSnackBar: false,
+    });
+
+    const onHandleSnackClose = () => {
+        setSnackBarMessage({
+            severity: "error",
+            message: "Please Add Systems",
+            showSnackBar: false,
+        });
+    };
     const dispatch = useDispatch();
     const { data, error, isLoading } = useGetEquipmentsQuery();
     const [selectedEquipment, setSelectedEquipment] = useState(null);
+    const [showloader, setShowLoader] = useState(false);
     const downloadCSV = (url, filename) => {
+        console.log(selectedEquipment.equipment_name)
         fetch(url, {
-            method: "POST"
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "equipmentName": selectedEquipment.equipment_name
+            })
         })
             .then((response) => response.blob())
             .then((blob) => {
@@ -134,6 +154,13 @@ const DownloadData = () => {
 
     const setEquipment = () => {
         dispatch(setCurrentEquipment(selectedEquipment));
+        setSnackBarMessage({
+            severity: "success",
+            message: "Equipment Loaded Successfully",
+            showSnackBar: true,
+        });
+
+        setShowLoader(!showloader)
     }
 
     return (
@@ -154,7 +181,7 @@ const DownloadData = () => {
                     </Button>
                 </AutoCompleteWrapper>
                 {
-                    progress < 100 ? <ProgressionBarWrapper>
+                    showloader && progress < 100 ? <ProgressionBarWrapper>
                         <ProgressWrapper>
                             <Box sx={{ mr: 2 }}>
                                 <LinearProgressBar variant="determinate" value={progress} />
@@ -186,7 +213,12 @@ const DownloadData = () => {
                         </BtnWrapper>
                     </ContentWrapper>
                 }
-
+                {SnackBarMessage.showSnackBar && (
+                    <CustomizedSnackbars
+                        message={SnackBarMessage}
+                        onHandleClose={onHandleSnackClose}
+                    />
+                )}
             </Div>
         </>
     )

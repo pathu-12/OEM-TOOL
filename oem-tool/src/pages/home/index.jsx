@@ -4,6 +4,7 @@ import RateReviewIcon from "@mui/icons-material/RateReview";
 import EngineeringIcon from "@mui/icons-material/Engineering";
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import HandymanIcon from '@mui/icons-material/Handyman';
+import DownloadIcon from '@mui/icons-material/Download';
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 
@@ -68,7 +69,7 @@ const Home = () => {
         { name: "Maintenance Allocation", icon: <EngineeringIcon sx={{ fontSize: 30 }}/>, path: "/maintainance_allocation" },
         { name: "Add System Docs", icon: <TextSnippetIcon sx={{ fontSize: 30 }}/>, path: "/equipment_docs" },
         { name: "Equipment Data", icon: <HandymanIcon sx={{ fontSize: 30 }}/>, path: "/equipment_data" },
-        { name: "Download Data", icon: <HandymanIcon sx={{ fontSize: 30 }}/>, path: "/download_data" },
+        { name: "Download Data", icon: <DownloadIcon sx={{ fontSize: 30 }}/>, path: "/download_data" },
     ];
     return (
         <>

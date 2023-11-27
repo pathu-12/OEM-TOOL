@@ -9,6 +9,7 @@ import styled from "styled-components";
 import { useGetEquipmentsQuery } from "../../redux/apiSlice";
 import { setCurrentEquipment } from "../../redux/currentEquipmentSlice";
 import { useDispatch, useSelector } from "react-redux";
+import CustomizedSnackbars from "../../components/Sneakbar";
 
 
 const Div = styled.div`
@@ -130,7 +131,21 @@ const MaintainanceAllocation = () => {
     const handleRadio = (event) => {
         setiRadio(event.target.value);
     };
+    
 
+    const [SnackBarMessage, setSnackBarMessage] = useState({
+        severity: "error",
+        message: "This is awesome",
+        showSnackBar: false,
+    });
+
+    const onHandleSnackClose = () => {
+        setSnackBarMessage({
+            severity: "error",
+            message: "Please Add Systems",
+            showSnackBar: false,
+        });
+    };
 
 
 
@@ -153,6 +168,11 @@ const MaintainanceAllocation = () => {
             });
         }
         setTableData(rows);
+        setSnackBarMessage({
+            severity: "success",
+            message: "Table Generated Successfully",
+            showSnackBar: true,
+        });
     };
 
     const saveSensorData = async () => {
@@ -176,7 +196,19 @@ const MaintainanceAllocation = () => {
             })
 
             const data = await request.json()
-            console.log(data)
+            if(data.code){
+                setSnackBarMessage({
+                    severity: "success",
+                    message: data.message,
+                    showSnackBar: true,
+                });
+            } else{
+                setSnackBarMessage({
+                    severity: "error",
+                    message: data.message,
+                    showSnackBar: true,
+                });
+            }
         }
         catch (e) {
             console.log(e)
@@ -259,6 +291,11 @@ const MaintainanceAllocation = () => {
 
     const setEquipment = () => {
         dispatch(setCurrentEquipment(selectedEquipment));
+        setSnackBarMessage({
+            severity: "success",
+            message: "Equipment Loaded Successfully",
+            showSnackBar: true,
+        }); 
     }
 
 
@@ -338,6 +375,12 @@ const MaintainanceAllocation = () => {
                 </BoxWrapper>
                 {selectedRadio === "conditionMonitoring" && <StyledButton variant="contained" onClick={saveSensorData}>submit</StyledButton>}
             </Div >
+            {SnackBarMessage.showSnackBar && (
+                <CustomizedSnackbars
+                    message={SnackBarMessage}
+                    onHandleClose={onHandleSnackClose}
+                />
+            )}
         </>
     )
 }

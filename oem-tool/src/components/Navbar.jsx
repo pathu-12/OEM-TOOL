@@ -4,16 +4,18 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import EngineeringIcon from "@mui/icons-material/Engineering";
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import HandymanIcon from '@mui/icons-material/Handyman';
+import HomeIcon from '@mui/icons-material/Home';
+import DownloadIcon from '@mui/icons-material/Download';
 
 const NavWrapper = styled.div`
     position: absolute;
     bottom: -5%;
     left: 50%;
     transform: translateX(-50%);
-    width: 20rem;
+    width: 25rem;
     background-image: linear-gradient(10deg, #42a5f5, #1e88e5, #0d47a1);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    height: 3rem;
+    height: 4rem;
     border-radius: 3rem;
     display: flex;
     justify-content: center;
@@ -62,10 +64,12 @@ const Navbar = () => {
         <>
             <NavWrapper>
                 <Nav>
+                    <Item><StyledLink to="/" activeClassName="active"><HomeIcon /></StyledLink></Item>
                     <Item><StyledLink to="/equipment_configuration" activeClassName="active"><SettingsIcon /></StyledLink></Item>
                     <Item><StyledLink to="/maintainance_allocation" activeClassName="active"><EngineeringIcon /></StyledLink></Item>
                     <Item><StyledLink to="/equipment_docs" activeClassName="active"><TextSnippetIcon /></StyledLink></Item>
                     <Item><StyledLink to="/equipment_data" activeClassName="active"><HandymanIcon /></StyledLink></Item>
+                    <Item><StyledLink to="/download_data" activeClassName="active"><DownloadIcon /></StyledLink></Item>
                 </Nav>
             </NavWrapper>
         </>

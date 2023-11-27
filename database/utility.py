@@ -15,8 +15,8 @@ def check_table_exist(object_id):
     except:
         return False
 
-def export_equipment_config_data():
-    equipment_configuration = '''
+def export_equipment_config_data(equipment_name):
+    equipment_configuration = f'''
         SELECT
             sys.*,
             ab.alpha,
@@ -26,11 +26,11 @@ def export_equipment_config_data():
         FROM oem_system_config AS sys
         LEFT JOIN alpha_beta AS ab ON sys.equipment_id = ab.equipment_id
         LEFT JOIN eta_beta AS eb ON sys.equipment_id = eb.equipment_id
-        RIGHT JOIN equipments_failure_modes AS ef ON sys.equipment_id = ef.equipment_id;
+        RIGHT JOIN equipments_failure_modes AS ef ON sys.equipment_id = ef.equipment_id where sys.equipment_name=?;
 
     '''
 
-    dataframe = pd.read_sql(equipment_configuration, cnxn)
+    dataframe = pd.read_sql(equipment_configuration, cnxn, params=(equipment_name))
     csv_data = dataframe.to_csv(index=False)
     response = Response(
         csv_data,
@@ -40,12 +40,12 @@ def export_equipment_config_data():
     return response
 
 
-def export_sensor_data():
-    equipment_configuration = '''
-        SELECT * FROM oem_sensor_data
+def export_sensor_data(equipment_name):
+    equipment_configuration = f'''
+        SELECT * FROM oem_sensor_data where equipment_name=?;
     '''
 
-    dataframe = pd.read_sql(equipment_configuration, cnxn)
+    dataframe = pd.read_sql(equipment_configuration, cnxn, params=(equipment_name))
     csv_data = dataframe.to_csv(index=False)
     response = Response(
         csv_data,
